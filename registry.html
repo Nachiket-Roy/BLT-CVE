@@ -9,87 +9,9 @@
     <title>Registry — BLT-CVE</title>
     <link rel="icon" type="image/x-icon" href="./favicon.ico" />
 
-    <script>
-        (function () {
-            try {
-                var saved = localStorage.getItem('blt-theme');
-                if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                }
-            } catch (e) { }
-        })();
-    </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#E10101',
-                        'primary-hover': '#B91C1C',
-                        'neutral-border': '#E5E5E5',
-                        'dark-base': '#111827',
-                        'dark-surface': '#1F2937',
-                        'active-bg': '#feeae9'
-                    },
-                    fontFamily: {
-                        sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif']
-                    }
-                }
-            }
-        };
-    </script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-
-        .fa-icon {
-            display: inline-block;
-            height: 1em;
-            width: auto;
-            aspect-ratio: 1;
-            vertical-align: -0.125em;
-            fill: currentColor;
-            overflow: visible;
-        }
-
-        :root {
-            --blt-primary: #E10101;
-            --blt-border: #E5E5E5;
-            --blt-surface: #ffffff;
-            --blt-background: #f8fafc;
-        }
-
-        .dark {
-            --blt-primary: #EF4444;
-            --blt-border: #374151;
-            --blt-surface: #1F2937;
-            --blt-background: #111827;
-        }
-
-        body {
-            background: var(--blt-background);
-            transition: background-color 0.3s ease;
-        }
-
-        .surface-card {
-            background: var(--blt-surface);
-            border: 1px solid var(--blt-border);
-            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-            transition: all 0.3s ease;
-        }
-
-        .section-link:hover {
-            text-decoration: underline;
-            text-underline-offset: 3px;
-        }
-
-        code {
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        }
-    </style>
+    <link rel="stylesheet" href="./css/common.css" />
+    <script src="./js/common.js"></script>
 </head>
 
 <body class="font-sans text-gray-900 antialiased dark:bg-dark-base dark:text-gray-100 relative">
@@ -109,39 +31,9 @@
         </symbol>
     </svg>
 
-    <header
+    <header id="main-header"
         class="sticky top-0 z-50 border-b border-neutral-border bg-white/95 backdrop-blur dark:border-gray-700 dark:bg-dark-surface/95">
-        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-            <a href="./index.html" class="flex items-center gap-3">
-                <img src="./logo.png" alt="BLT logo" class="h-8 w-8 rounded-md" />
-                <div>
-                    <p class="text-sm font-extrabold leading-none dark:text-gray-100 uppercase tracking-tighter">BLT-CVE
-                    </p>
-                    <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400">Decentralized Registry</p>
-                </div>
-            </a>
-
-            <nav class="hidden items-center gap-6 md:flex">
-                <a href="./registry.html" class="text-primary text-sm font-bold uppercase tracking-tight">Registry</a>
-                <a href="./index.html#endpoints"
-                    class="section-link text-sm font-semibold dark:text-gray-200">Endpoints</a>
-                <a href="./index.html#schema" class="section-link text-sm font-semibold dark:text-gray-200">Schema</a>
-                <a href="./submit.html" class="section-link text-sm font-semibold dark:text-gray-200">Submit</a>
-                <a href="./coming-soon.html" class="section-link text-sm font-semibold dark:text-gray-200">Docs</a>
-            </nav>
-
-            <div class="flex items-center gap-3">
-                <button id="dark-toggle"
-                    class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-neutral-border text-gray-700 dark:border-gray-600 dark:text-gray-300">
-                    <svg class="fa-icon dark:hidden">
-                        <use href="#fa-moon"></use>
-                    </svg>
-                    <svg class="fa-icon hidden dark:inline-block">
-                        <use href="#fa-sun"></use>
-                    </svg>
-                </button>
-            </div>
-        </div>
+        <!-- Injected by common.js -->
     </header>
 
     <main class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -200,18 +92,14 @@
                 </table>
             </div>
         </div>
+
+        <footer id="main-footer"
+            class="mt-24 border-t border-neutral-border bg-white py-12 dark:border-gray-700 dark:bg-dark-surface">
+            <!-- Injected by common.js -->
+        </footer>
     </main>
 
     <script>
-        // Dark mode logic
-        const darkToggle = document.getElementById('dark-toggle');
-        const html = document.documentElement;
-        darkToggle.addEventListener('click', () => {
-            html.classList.toggle('dark');
-            const isDark = html.classList.contains('dark');
-            localStorage.setItem('blt-theme', isDark ? 'dark' : 'light');
-        });
-
         // Registry Logic
         let allEntries = [];
         const registryBody = document.getElementById('registry-body');

@@ -1,0 +1,63 @@
+/**
+ * BLT-CVE Common Styles
+ */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --blt-primary: #E10101;
+    --blt-border: #E5E5E5;
+    --blt-surface: #ffffff;
+    --blt-background: #f8fafc;
+}
+
+.dark {
+    --blt-primary: #EF4444;
+    --blt-border: #374151;
+    --blt-surface: #1F2937;
+    --blt-background: #111827;
+}
+
+body {
+    background: var(--blt-background);
+    transition: background-color 0.3s ease;
+}
+
+.fa-icon {
+    display: inline-block;
+    height: 1em;
+    width: auto;
+    aspect-ratio: 1;
+    vertical-align: -0.125em;
+    fill: currentColor;
+    overflow: visible;
+}
+
+.surface-card {
+    background: var(--blt-surface);
+    border: 1px solid var(--blt-border);
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    transition: all 0.3s ease;
+}
+
+.section-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Red gradient only at top, not fixed when scrolled */
+.hero-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 500px;
+    z-index: -10;
+    pointer-events: none;
+    background:
+        radial-gradient(circle at 50% 0%, rgba(225, 1, 1, 0.15), transparent 70%),
+        linear-gradient(to bottom, transparent, var(--blt-background));
+}
