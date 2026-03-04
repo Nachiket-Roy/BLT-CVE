@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="BLT-CVE — Decentralized Vulnerability Registry. Standards-driven, machine-readable, and cryptographically verifiable." />
+    <title>BLT-CVE — Decentralized Vulnerability Registry</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('blt-theme');
+                if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E10101',
+                        'primary-hover': '#B91C1C',
+                        'neutral-border': '#E5E5E5',
+                        'dark-base': '#111827',
+                        'dark-surface': '#1F2937',
+                        'active-bg': '#feeae9'
+                    },
+                    fontFamily: {
+                        sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+        .fa-icon {
+            display: inline-block;
+            height: 1em;
+            width: auto;
+            aspect-ratio: 1;
+            vertical-align: -0.125em;
+            fill: currentColor;
+            overflow: visible;
+        }
+
+        :root {
+            --blt-primary: #E10101;
+            --blt-border: #E5E5E5;
+            --blt-surface: #ffffff;
+            --blt-background: #f8fafc;
+        }
+
+        .dark {
+            --blt-primary: #EF4444;
+            --blt-border: #374151;
+            --blt-surface: #1F2937;
+            --blt-background: #111827;
+        }
+
+        body {
+            background: var(--blt-background);
+            transition: background-color 0.3s ease;
+        }
+
+        /* Red gradient only at top, not fixed when scrolled */
+        .hero-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 500px;
+            z-index: -10;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(225, 1, 1, 0.15), transparent 70%),
+                linear-gradient(to bottom, transparent, var(--blt-background));
+        }
+
+        .surface-card {
+            background: var(--blt-surface);
+            border: 1px solid var(--blt-border);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        .section-link:hover {
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-900 antialiased dark:bg-dark-base dark:text-gray-100 relative">
+    <div class="hero-glow"></div>
+
+    <!-- Icons -->
+    <svg xmlns="http://www.w3.org/2000/svg" class="hidden">
+        <symbol id="fa-bug" viewBox="0 0 512 512">
+            <path
+                d="M512 256c0 141.4-114.6 256-256 256S0 397.4 0 256 114.6 0 256 0s256 114.6 256 256zM256 64a192 192 0 1 0 0 384 192 192 0 1 0 0-384zM160 256a96 96 0 1 1 192 0 96 96 0 1 1-192 0z" />
+        </symbol>
+        <symbol id="fa-github" viewBox="0 0 496 512">
+            <path
+                d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1 100-33.2 167.8-128.1 167.8-239c0-138.7-112.5-244-251.2-244z" />
+        </symbol>
+        <symbol id="fa-moon" viewBox="0 0 512 512">
+            <path
+                d="M223.5 32C100 32 0 132 0 255.5S100 479 223.5 479c60.6 0 115.5-24.2 155.8-63.4 5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-7.8c-11.2 3.1-23.1 4.7-35.4 4.7-88.8 0-160.8-72-160.8-160.8 0-61.6 34.5-115.1 85-142.3 6.1-3.3 8.3-10.8 5-16.9s-10.3-9.5-17.2-7.6c-13.6 3.7-28 5.7-43 5.7z" />
+        </symbol>
+        <symbol id="fa-sun" viewBox="0 0 512 512">
+            <path
+                d="M256 128a128 128 0 1 0 128 128 128 128 0 0 0-128-128zm0 224a96 96 0 1 1 96-96 96 96 0 0 1-96 96zm0-240a16 16 0 0 1-16-16V48a16 16 0 0 1 32 0v48a16 16 0 0 1-16 16zm0 304a16 16 0 0 1-16 16v48a16 16 0 0 1 32 0v-48a16 16 0 0 1-16-16zm232-152h48a16 16 0 0 1 0 32h-48a16 16 0 0 1 0-32zM48 240h48a16 16 0 0 1 0 32H48a16 16 0 0 1 0-32zm301.9-106.3a16 16 0 0 1 0-22.6l33.9-33.9a16 16 0 1 1 22.6 22.6l-33.9 33.9a16 16 0 0 1-22.6 0zM107.5 359a16 16 0 1 1 22.6 22.6L96.2 415.5a16 16 0 0 1-22.6-22.6zM350 359a16 16 0 0 1 22.6 0l33.9 33.9a16 16 0 1 1-22.6 22.6l-33.9-33.9a16 16 0 0 1 0-22.6zM107.5 153a16 16 0 0 1 0-22.6l33.9-33.9a16 16 0 0 1 22.6 22.6l-33.9 33.9a16 16 0 0 1-22.6 0z" />
+        </symbol>
+    </svg>
+
+    <header
+        class="sticky top-0 z-50 border-b border-neutral-border bg-white/95 backdrop-blur dark:border-gray-700 dark:bg-dark-surface/95">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <a href="./index.html" class="flex items-center gap-3">
+                <img src="./logo.png" alt="BLT logo" class="h-8 w-8 rounded-md" />
+                <div>
+                    <p class="text-sm font-extrabold leading-none dark:text-gray-100 uppercase tracking-tighter">BLT-CVE
+                    </p>
+                    <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400">Decentralized Registry</p>
+                </div>
+            </a>
+
+            <nav class="hidden items-center gap-6 md:flex">
+                <a href="./coming-soon.html" class="section-link text-sm font-semibold dark:text-gray-200">Registry</a>
+                <a href="#endpoints" class="section-link text-sm font-semibold dark:text-gray-200">Endpoints</a>
+                <a href="#schema" class="section-link text-sm font-semibold dark:text-gray-200">Schema</a>
+                <a href="./coming-soon.html" class="section-link text-sm font-semibold dark:text-gray-200">Submit</a>
+                <a href="./coming-soon.html"
+                    class="section-link text-sm font-semibold dark:text-gray-200">Federation</a>
+                <a href="./coming-soon.html" class="section-link text-sm font-semibold dark:text-gray-200">Docs</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <button id="dark-toggle"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-neutral-border text-gray-700 dark:border-gray-600 dark:text-gray-300">
+                    <svg class="fa-icon dark:hidden">
+                        <use href="#fa-moon"></use>
+                    </svg>
+                    <svg class="fa-icon hidden dark:inline-block">
+                        <use href="#fa-sun"></use>
+                    </svg>
+                </button>
+                <a href="./coming-soon.html"
+                    class="hidden rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-hover sm:inline-flex">
+                    Report Vulnerability
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+        <!-- Hero Section -->
+        <section class="text-center">
+            <div class="mb-6 flex justify-center gap-2">
+                <span
+                    class="rounded-full bg-active-bg px-3 py-1 text-xs font-bold text-primary dark:bg-red-950/30 dark:text-red-400">Community-Operated</span>
+                <span
+                    class="rounded-full bg-indigo-50 px-3 py-1 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">No
+                    Backend Required</span>
+            </div>
+            <h1 class="text-5xl font-extrabold tracking-tight text-gray-900 sm:text-7xl dark:text-gray-100">
+                BLT-CVE <br />
+                <span class="text-primary dark:text-red-500">Vulnerability Registry</span>
+            </h1>
+            <p class="mx-auto mt-6 max-w-3xl text-lg leading-relaxed text-gray-600 dark:text-gray-300">
+                A standards-driven, machine-readable, cryptographically verifiable, federated vulnerability registry
+                running entirely on
+                <span class="font-bold text-gray-900 dark:text-white">GitHub Pages</span> and
+                <span class="font-bold text-gray-900 dark:text-white">GitHub Actions</span> — no backend required.
+            </p>
+
+            <div class="mt-10 flex flex-wrap justify-center gap-4">
+                <a href="./coming-soon.html"
+                    class="rounded-lg bg-primary px-8 py-4 text-lg font-bold text-white shadow-lg transition hover:bg-primary-hover">
+                    Submit a Vulnerability
+                </a>
+                <a href="https://github.com/OWASP-BLT/BLT-CVE"
+                    class="flex items-center gap-2 rounded-lg border border-neutral-border bg-white px-8 py-4 text-lg font-bold text-gray-900 transition hover:bg-gray-50 dark:border-gray-700 dark:bg-dark-surface dark:text-white dark:hover:bg-gray-800">
+                    <svg class="fa-icon w-5 h-5">
+                        <use href="#fa-github"></use>
+                    </svg>
+                    View on GitHub
+                </a>
+            </div>
+
+            <div
+                class="mt-12 rounded-xl border border-amber-200 bg-amber-50 p-6 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-300 max-w-4xl mx-auto">
+                <p class="font-bold mb-1">Disclaimer</p>
+                BLT IDs are not MITRE-issued CVE IDs. They are community-assigned identifiers within the OWASP BLT
+                ecosystem. Always cross-reference with official CVE sources for production security decisions.
+            </div>
+        </section>
+
+        <!-- Endpoints Section -->
+        <section id="endpoints" class="mt-24">
+            <div class="mb-10 text-center sm:text-left">
+                <h2 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100">Endpoints (Machine-Readable)</h2>
+                <p class="mt-2 text-gray-600 dark:text-gray-400">Direct access to registry data in standard JSON
+                    formats.</p>
+            </div>
+
+            <div class="surface-card overflow-hidden rounded-2xl">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="bg-gray-50 dark:bg-gray-800/50">
+                            <th class="px-6 py-4 text-sm font-bold uppercase tracking-wider text-gray-500">Endpoint</th>
+                            <th class="px-6 py-4 text-sm font-bold uppercase tracking-wider text-gray-500">Description
+                            </th>
+                            <th class="px-6 py-4 text-sm font-bold uppercase tracking-wider text-gray-500">Link</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-border dark:divide-gray-700">
+                        <tr>
+                            <td class="px-6 py-4"><code>/index.json</code></td>
+                            <td class="px-6 py-4 text-gray-600 dark:text-gray-300">Lightweight master index — ID, path,
+                                severity</td>
+                            <td class="px-6 py-4"><a href="./index.json"
+                                    class="text-primary font-bold hover:underline">Open</a></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4"><code>/feed.json</code></td>
+                            <td class="px-6 py-4 text-gray-600 dark:text-gray-300">Full metadata feed — titles, dates,
+                                severity</td>
+                            <td class="px-6 py-4"><a href="./feed.json"
+                                    class="text-primary font-bold hover:underline">Open</a></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4"><code>/federation.json</code></td>
+                            <td class="px-6 py-4 text-gray-600 dark:text-gray-300">Federation manifest for mirrors and
+                                aggregators</td>
+                            <td class="px-6 py-4"><a href="./federation.json"
+                                    class="text-primary font-bold hover:underline">Open</a></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4"><code>/schema/blt-cve-schema.json</code></td>
+                            <td class="px-6 py-4 text-gray-600 dark:text-gray-300">JSON Schema (Draft-07) for entry
+                                validation</td>
+                            <td class="px-6 py-4"><a href="./schema/blt-cve-schema.json"
+                                    class="text-primary font-bold hover:underline">Open</a></td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4"><code>/cves/YYYY/BLT-YYYY-NNNN.json</code></td>
+                            <td class="px-6 py-4 text-gray-600 dark:text-gray-300">Individual vulnerability entry</td>
+                            <td class="px-6 py-4"><a href="./coming-soon.html"
+                                    class="text-primary font-bold hover:underline">Example</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Schema Section -->
+        <section id="schema" class="mt-24 grid gap-12 lg:grid-cols-2">
+            <div>
+                <h2 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100">Schema</h2>
+                <p class="mt-4 text-lg text-gray-600 dark:text-gray-400">Required fields for every BLT-CVE entry.</p>
+
+                <ul class="mt-8 space-y-6">
+                    <li class="flex gap-4">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-100 text-[#E10101] dark:bg-red-500/20 dark:text-[#EF4444]">
+                            <span class="font-bold">id</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 dark:text-white">identifier (string)</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">BLT-YYYY-NNNN identifier</p>
+                        </div>
+                    </li>
+                    <li class="flex gap-4">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span class="font-bold">dt</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 dark:text-white">published/modified (string)</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">ISO-8601 date-time</p>
+                        </div>
+                    </li>
+                    <li class="flex gap-4">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span class="font-bold">ti</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 dark:text-white">title/description (string)</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Summary (10-200) and full technical
+                                description (≥20 chars)</p>
+                        </div>
+                    </li>
+                    <li class="flex gap-4">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span class="font-bold">af</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 dark:text-white">affected (array)</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">One or more affected product objects</p>
+                        </div>
+                    </li>
+                    <li class="flex gap-4">
+                        <div
+                            class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+                            <span class="font-bold">sv</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-gray-900 dark:text-white">severity (object)</p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">CVSS score + vector string</p>
+                        </div>
+                    </li>
+                </ul>
+                <p class="mt-8 text-sm italic text-gray-500">Note: signature is optional — reserved for future
+                    cryptographic signing.</p>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold mb-4">Example Entry</h3>
+                <div class="surface-card rounded-2xl p-6 bg-gray-900 text-gray-300 font-mono text-sm shadow-2xl">
+                    <pre class="overflow-x-auto"><code>{
+  <span class="text-red-400">"id"</span>: <span class="text-emerald-400">"BLT-2026-0001"</span>,
+  <span class="text-red-400">"published"</span>: <span class="text-emerald-400">"2026-02-22T00:00:00Z"</span>,
+  <span class="text-red-400">"modified"</span>: <span class="text-emerald-400">"2026-02-22T00:00:00Z"</span>,
+  <span class="text-red-400">"title"</span>: <span class="text-emerald-400">"Short vulnerability summary"</span>,
+  <span class="text-red-400">"description"</span>: <span class="text-emerald-400">"Full technical description…"</span>,
+  <span class="text-red-400">"affected"</span>: [{
+    <span class="text-red-400">"vendor"</span>: <span class="text-emerald-400">"ExampleCorp"</span>,
+    <span class="text-red-400">"product"</span>: <span class="text-emerald-400">"ExampleApp"</span>,
+    <span class="text-red-400">"versions"</span>: <span class="text-emerald-400">"1.0.0 through 1.2.3"</span>
+  }],
+  <span class="text-red-400">"severity"</span>: {
+    <span class="text-red-400">"cvss_score"</span>: 9.8,
+    <span class="text-red-400">"vector"</span>: <span class="text-emerald-400">"CVSS:3.1/AV:N/AC:L/…"</span>
+  },
+  <span class="text-red-400">"references"</span>: [<span class="text-emerald-400">"https://example.com/…"</span>],
+  <span class="text-red-400">"reporter"</span>: <span class="text-emerald-400">"your-github-username"</span>,
+  <span class="text-red-400">"signature"</span>: <span class="text-emerald-400">""</span>
+}</code></pre>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-24 border-t border-neutral-border bg-white py-12 dark:border-gray-700 dark:bg-dark-surface">
+        <div class="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+            <div class="flex justify-center mb-6">
+                <img src="./logo.png" alt="BLT logo" class="h-10 w-10" />
+            </div>
+            <p class="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-widest">OWASP BLT 
+            </p>
+            <p class="mt-4 text-sm text-gray-500">© 2026 — Distributed Registry Protocol</p>
+            <div class="mt-6 flex justify-center gap-6">
+                <a href="https://github.com/OWASP-BLT" class="text-gray-400 hover:text-primary transition"><svg
+                        class="fa-icon w-6 h-6">
+                        <use href="#fa-github"></use>
+                    </svg></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const darkToggle = document.getElementById('dark-toggle');
+        const html = document.documentElement;
+
+        darkToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('blt-theme', isDark ? 'dark' : 'light');
+        });
+
+        // Sync with system preferences if no manual choice
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('blt-theme')) {
+                if (e.matches) html.classList.add('dark');
+                else html.classList.remove('dark');
+            }
+        });
+    </script>
+</body>
+
+</html>

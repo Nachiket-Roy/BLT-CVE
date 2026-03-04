@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Feature coming soon to BLT-CVE — Decentralized Vulnerability Registry." />
+    <title>Coming Soon — BLT-CVE</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('blt-theme');
+                if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E10101',
+                        'dark-base': '#111827',
+                        'dark-surface': '#1F2937',
+                        'active-bg': '#feeae9'
+                    },
+                    fontFamily: {
+                        sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --blt-primary: #E10101;
+            --blt-background: #f8fafc;
+        }
+
+        .dark {
+            --blt-primary: #EF4444;
+            --blt-background: #111827;
+        }
+
+        body {
+            background: var(--blt-background);
+            transition: background-color 0.3s ease;
+        }
+
+        .hero-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 500px;
+            z-index: -10;
+            pointer-events: none;
+            background:
+                radial-gradient(circle at 50% 0%, rgba(225, 1, 1, 0.1), transparent 70%),
+                linear-gradient(to bottom, transparent, var(--blt-background));
+        }
+    </style>
+</head>
+
+<body
+    class="font-sans text-gray-900 antialiased dark:bg-dark-base dark:text-gray-100 relative min-h-screen flex flex-col items-center justify-center px-4">
+    <div class="hero-glow"></div>
+
+    <div class="text-center max-w-2xl">
+        <div class="flex justify-center mb-8">
+            <img src="./logo.png" alt="BLT logo" class="h-16 w-16 rounded-xl shadow-lg" />
+        </div>
+
+        <span
+            class="rounded-full bg-indigo-50 px-4 py-1.5 text-xs font-bold text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400">No
+            Backend Required</span>
+
+        <h1 class="mt-6 text-6xl font-extrabold tracking-tight text-gray-900 sm:text-7xl dark:text-gray-100">
+            Coming <span class="text-primary dark:text-red-500">Soon</span>
+        </h1>
+
+        <p class="mt-6 text-lg text-gray-600 dark:text-gray-400">
+            We're working hard to bring this feature to the BLT-CVE registry. Stay tuned for decentralized,
+            cryptographically verifiable updates.
+        </p>
+
+        <div class="mt-10">
+            <a href="./index.html"
+                class="inline-flex items-center gap-2 rounded-lg bg-primary px-8 py-4 text-lg font-bold text-white shadow-xl transition hover:opacity-90">
+                Back to Home
+            </a>
+        </div>
+    </div>
+
+    <footer class="absolute bottom-8 text-sm text-gray-500">
+        © 2026 — OWASP BLT Contributors
+    </footer>
+</body>
+
+</html>
