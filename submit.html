@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+        content="BLT-CVE — Decentralized Vulnerability Registry. Standards-driven, machine-readable, and cryptographically verifiable." />
+    <title>Submit Vulnerability — BLT-CVE</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+
+    <script>
+        (function () {
+            try {
+                var saved = localStorage.getItem('blt-theme');
+                if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#E10101',
+                        'primary-hover': '#B91C1C',
+                        'neutral-border': '#E5E5E5',
+                        'dark-base': '#111827',
+                        'dark-surface': '#1F2937',
+                        'active-bg': '#feeae9'
+                    },
+                    fontFamily: {
+                        sans: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+        .fa-icon {
+            display: inline-block;
+            height: 1em;
+            width: auto;
+            aspect-ratio: 1;
+            vertical-align: -0.125em;
+            fill: currentColor;
+            overflow: visible;
+        }
+
+        :root {
+            --blt-primary: #E10101;
+            --blt-border: #E5E5E5;
+            --blt-surface: #ffffff;
+            --blt-background: #f8fafc;
+        }
+
+        .dark {
+            --blt-primary: #EF4444;
+            --blt-border: #374151;
+            --blt-surface: #1F2937;
+            --blt-background: #111827;
+        }
+
+        body {
+            background: var(--blt-background);
+            transition: background-color 0.3s ease;
+        }
+
+        .surface-card {
+            background: var(--blt-surface);
+            border: 1px solid var(--blt-border);
+            box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+            transition: all 0.3s ease;
+        }
+
+        code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        .form-input {
+            display: block;
+            width: 100%;
+            border-radius: 0.5rem;
+            border-width: 1px;
+            border-color: var(--blt-border);
+            background-color: white;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+
+        .dark .form-input {
+            border-color: #374151;
+            background-color: #1F2937;
+            color: white;
+        }
+
+        .form-input:focus {
+            border-color: var(--blt-primary);
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            --tw-ring-color: var(--blt-primary);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.25rem;
+        }
+
+        .dark .form-label {
+            color: #D1D5DB;
+        }
+    </style>
+</head>
+
+<body class="font-sans text-gray-900 antialiased dark:bg-dark-base dark:text-gray-100 relative">
+    <header
+        class="sticky top-0 z-50 border-b border-neutral-border bg-white/95 backdrop-blur dark:border-gray-700 dark:bg-dark-surface/95">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <a href="./index.html" class="flex items-center gap-3">
+                <img src="./logo.png" alt="BLT logo" class="h-8 w-8 rounded-md" />
+                <div>
+                    <p class="text-sm font-extrabold leading-none dark:text-gray-100 uppercase tracking-tighter">BLT-CVE
+                    </p>
+                    <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400">Decentralized Registry</p>
+                </div>
+            </a>
+
+            <nav class="hidden items-center gap-6 md:flex">
+                <a href="./registry.html" class="section-link text-sm font-semibold dark:text-gray-200">Registry</a>
+                <a href="./submit.html" class="text-primary text-sm font-bold uppercase tracking-tight">Submit</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <button id="dark-toggle"
+                    class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-neutral-border text-gray-700 dark:border-gray-600 dark:text-gray-300">
+                    <svg class="fa-icon dark:hidden" viewBox="0 0 512 512">
+                        <path
+                            d="M223.5 32C100 32 0 132 0 255.5S100 479 223.5 479c60.6 0 115.5-24.2 155.8-63.4 5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-7.8c-11.2 3.1-23.1 4.7-35.4 4.7-88.8 0-160.8-72-160.8-160.8 0-61.6 34.5-115.1 85-142.3 6.1-3.3 8.3-10.8 5-16.9s-10.3-9.5-17.2-7.6c-13.6 3.7-28 5.7-43 5.7z" />
+                    </svg>
+                    <svg class="fa-icon hidden dark:inline-block" viewBox="0 0 512 512">
+                        <path
+                            d="M256 128a128 128 0 1 0 128 128 128 128 0 0 0-128-128zm0 224a96 96 0 1 1 96-96 96 96 0 0 1-96 96zm0-240a16 16 0 0 1-16-16V48a16 16 0 0 1 32 0v48a16 16 0 0 1-16 16zm0 304a16 16 0 0 1-16 16v48a16 16 0 0 1 32 0v-48a16 16 0 0 1-16-16zm232-152h48a16 16 0 0 1 0 32h-48a16 16 0 0 1 0-32zM48 240h48a16 16 0 0 1 0 32H48a16 16 0 0 1 0-32zm301.9-106.3a16 16 0 0 1 0-22.6l33.9-33.9a16 16 0 1 1 22.6 22.6l-33.9 33.9a16 16 0 0 1-22.6 0zM107.5 359a16 16 0 1 1 22.6 22.6L96.2 415.5a16 16 0 0 1-22.6-22.6zM350 359a16 16 0 0 1 22.6 0l33.9 33.9a16 16 0 1 1-22.6 22.6l-33.9-33.9a16 16 0 0 1 0-22.6zM107.5 153a16 16 0 0 1 0-22.6l33.9-33.9a16 16 0 0 1 22.6 22.6l-33.9 33.9a16 16 0 0 1-22.6 0z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div class="mb-12 text-center">
+            <h1 class="text-4xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">Submit Vulnerability
+            </h1>
+            <p class="mt-4 text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">Fill out the form below to
+                generate a valid BLT-CVE JSON entry. You can then submit this JSON via a GitHub Pull Request.</p>
+        </div>
+
+        <div class="grid gap-12 lg:grid-cols-2">
+            <!-- Form -->
+            <div class="surface-card p-8 rounded-2xl">
+                <form id="submit-form" class="space-y-6">
+                    <div>
+                        <label class="form-label">Title</label>
+                        <input type="text" id="form-title" class="form-input"
+                            placeholder="e.g. Broken Access Control in API" required>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Technical Description</label>
+                        <textarea id="form-description" rows="4" class="form-input"
+                            placeholder="Provide a detailed technical description..." required></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label">Vendor</label>
+                            <input type="text" id="form-vendor" class="form-input" placeholder="e.g. OWASP" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Product</label>
+                            <input type="text" id="form-product" class="form-input" placeholder="e.g. BLT" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Affected Versions</label>
+                        <input type="text" id="form-versions" class="form-input" placeholder="e.g. 1.0.0 through 1.5.2"
+                            required>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="form-label">CVSS Score</label>
+                            <input type="number" id="form-cvss" step="0.1" min="0" max="10" class="form-input"
+                                placeholder="7.5" required>
+                        </div>
+                        <div>
+                            <label class="form-label">Reporter (GitHub User)</label>
+                            <input type="text" id="form-reporter" class="form-input" placeholder="your-username"
+                                required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">CVSS Vector String</label>
+                        <input type="text" id="form-vector" class="form-input"
+                            placeholder="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N" required>
+                    </div>
+
+                    <div>
+                        <label class="form-label">References (one per line)</label>
+                        <textarea id="form-references" rows="3" class="form-input"
+                            placeholder="https://github.com/..."></textarea>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Preview/Output -->
+            <div class="space-y-6">
+                <div class="surface-card p-6 rounded-2xl bg-gray-900 border-gray-800">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-sm font-bold text-gray-400 uppercase tracking-widest">Generated JSON</h2>
+                        <button id="copy-json"
+                            class="text-xs font-bold text-primary hover:text-white transition-colors">Copy to
+                            Clipboard</button>
+                    </div>
+                    <pre
+                        class="overflow-x-auto text-xs font-mono text-emerald-400"><code id="json-preview"></code></pre>
+                </div>
+
+                <div
+                    class="surface-card p-6 rounded-2xl border-indigo-200 bg-indigo-50 dark:border-indigo-900 dark:bg-indigo-950/30">
+                    <h2 class="text-sm font-bold text-indigo-900 dark:text-indigo-300 uppercase tracking-widest mb-4">
+                        How to Submit</h2>
+                    <ul class="text-sm text-indigo-800 dark:text-indigo-400 space-y-4">
+                        <li class="flex gap-3">
+                            <span
+                                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white text-xs">1</span>
+                            <p>Copy the generated JSON above.</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <span
+                                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white text-xs">2</span>
+                            <p>Go to the <a href="https://github.com/OWASP-BLT/BLT-CVE"
+                                    class="font-bold underline">BLT-CVE Repository</a>.</p>
+                        </li>
+                        <li class="flex gap-3">
+                            <span
+                                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white text-xs">3</span>
+                            <p>Create a new file in <code>cves/${new Date().getFullYear()}/</code> named
+                                <code>BLT-${new Date().getFullYear()}-XXXX.json</code> and paste your JSON.
+                            </p>
+                        </li>
+                        <li class="flex gap-3">
+                            <span
+                                class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white text-xs">4</span>
+                            <p>Open a Pull Request. Our automation will validate your submission against the schema.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Dark mode logic
+        const darkToggle = document.getElementById('dark-toggle');
+        const html = document.documentElement;
+        darkToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            localStorage.setItem('blt-theme', isDark ? 'dark' : 'light');
+        });
+
+        // Form Logic
+        const form = document.getElementById('submit-form');
+        const preview = document.getElementById('json-preview');
+        const copyBtn = document.getElementById('copy-json');
+
+        const inputs = [
+            'form-title', 'form-description', 'form-vendor',
+            'form-product', 'form-versions', 'form-cvss',
+            'form-reporter', 'form-vector', 'form-references'
+        ];
+
+        function updateJSON() {
+            const now = new Date().toISOString();
+            const year = new Date().getFullYear();
+
+            const data = {
+                id: `BLT-${year}-XXXX`,
+                published: now,
+                modified: now,
+                title: document.getElementById('form-title').value || "Summary",
+                description: document.getElementById('form-description').value || "Details...",
+                affected: [{
+                    vendor: document.getElementById('form-vendor').value || "Vendor",
+                    product: document.getElementById('form-product').value || "Product",
+                    versions: document.getElementById('form-versions').value || "x.y.z"
+                }],
+                severity: {
+                    cvss_score: parseFloat(document.getElementById('form-cvss').value) || 0.0,
+                    vector: document.getElementById('form-vector').value || "CVSS:3.1/..."
+                },
+                references: document.getElementById('form-references').value.split('\n').filter(r => r.trim() !== ""),
+                reporter: document.getElementById('form-reporter').value || "your-github-username",
+                signature: ""
+            };
+
+            preview.textContent = JSON.stringify(data, null, 2);
+        }
+
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', updateJSON);
+        });
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(preview.textContent);
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => copyBtn.textContent = 'Copy to Clipboard', 2000);
+        });
+
+        // Initial call
+        updateJSON();
+    </script>
+</body>
+
+</html>
