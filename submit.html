@@ -118,55 +118,55 @@
             <div class="surface-card p-8 rounded-2xl">
                 <form id="submit-form" class="space-y-6">
                     <div>
-                        <label class="form-label">Title</label>
-                        <input type="text" id="form-title" class="form-input"
+                        <label for="form-title" class="form-label">Title</label>
+                        <input type="text" id="form-title" class="form-input" minlength="10" maxlength="200"
                             placeholder="e.g. Broken Access Control in API" required>
                     </div>
 
                     <div>
-                        <label class="form-label">Technical Description</label>
-                        <textarea id="form-description" rows="4" class="form-input"
+                        <label for="form-description" class="form-label">Technical Description</label>
+                        <textarea id="form-description" rows="4" class="form-input" minlength="20"
                             placeholder="Provide a detailed technical description..." required></textarea>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label">Vendor</label>
+                            <label for="form-vendor" class="form-label">Vendor</label>
                             <input type="text" id="form-vendor" class="form-input" placeholder="e.g. OWASP" required>
                         </div>
                         <div>
-                            <label class="form-label">Product</label>
+                            <label for="form-product" class="form-label">Product</label>
                             <input type="text" id="form-product" class="form-input" placeholder="e.g. BLT" required>
                         </div>
                     </div>
 
                     <div>
-                        <label class="form-label">Affected Versions</label>
+                        <label for="form-versions" class="form-label">Affected Versions</label>
                         <input type="text" id="form-versions" class="form-input" placeholder="e.g. 1.0.0 through 1.5.2"
                             required>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="form-label">CVSS Score</label>
+                            <label for="form-cvss" class="form-label">CVSS Score</label>
                             <input type="number" id="form-cvss" step="0.1" min="0" max="10" class="form-input"
                                 placeholder="7.5" required>
                         </div>
                         <div>
-                            <label class="form-label">Reporter (GitHub User)</label>
+                            <label for="form-reporter" class="form-label">Reporter (GitHub User)</label>
                             <input type="text" id="form-reporter" class="form-input" placeholder="your-username"
                                 required>
                         </div>
                     </div>
 
                     <div>
-                        <label class="form-label">CVSS Vector String</label>
+                        <label for="form-vector" class="form-label">CVSS Vector String</label>
                         <input type="text" id="form-vector" class="form-input"
                             placeholder="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N" required>
                     </div>
 
                     <div>
-                        <label class="form-label">References (one per line)</label>
+                        <label for="form-references" class="form-label">References (one per line)</label>
                         <textarea id="form-references" rows="3" class="form-input"
                             placeholder="https://github.com/..."></textarea>
                     </div>
@@ -235,6 +235,10 @@
         function updateJSON() {
             const now = new Date().toISOString();
             const year = new Date().getFullYear();
+            const references = document.getElementById('form-references').value
+                .split('\n')
+                .map(r => r.trim())
+                .filter(Boolean);
             document.getElementById('cve-path').textContent = `cves/${year}/`;
             document.getElementById('cve-filename').textContent = `BLT-${year}-XXXX.json`;
 
@@ -253,7 +257,7 @@
                     cvss_score: parseFloat(document.getElementById('form-cvss').value) || 0.0,
                     vector: document.getElementById('form-vector').value || "CVSS:3.1/..."
                 },
-                references: document.getElementById('form-references').value.split('\n').filter(r => r.trim() !== "") || ["https://example.com/placeholder"],
+                references,
                 reporter: document.getElementById('form-reporter').value || "your-github-username",
                 signature: ""
             };
@@ -267,14 +271,14 @@
 
         copyBtn.addEventListener('click', () => {
             navigator.clipboard.writeText(preview.textContent)
-        .then(() => {
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => copyBtn.textContent = 'Copy to Clipboard', 2000);
-        })
-        .catch(() => {
-            copyBtn.textContent = 'Copy failed';
-            setTimeout(() => copyBtn.textContent = 'Copy to Clipboard', 2000);
-        });
+                .then(() => {
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => copyBtn.textContent = 'Copy to Clipboard', 2000);
+                })
+                .catch(() => {
+                    copyBtn.textContent = 'Copy failed';
+                    setTimeout(() => copyBtn.textContent = 'Copy to Clipboard', 2000);
+                });
         });
 
         // Initial call

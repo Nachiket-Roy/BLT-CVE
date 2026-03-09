@@ -46,19 +46,23 @@
 
         <!-- Search and Filters -->
         <div class="mb-8 flex flex-wrap gap-4 items-center justify-between">
-            <div class="relative w-full max-w-md">
-                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg class="fa-icon w-4 h-4 text-gray-400">
-                        <use href="#fa-search"></use>
-                    </svg>
+            <div class="w-full max-w-md">
+                <label for="search-input" class="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">Search
+                    Registry</label>
+                <div class="relative">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="fa-icon w-4 h-4 text-gray-400">
+                            <use href="#fa-search"></use>
+                        </svg>
+                    </div>
+                    <input type="text" id="search-input"
+                        class="block w-full rounded-lg border border-neutral-border bg-white px-10 py-2.5 text-sm focus:border-primary focus:ring-primary dark:border-gray-700 dark:bg-dark-surface dark:text-white"
+                        placeholder="Search ID, title, or severity...">
                 </div>
-                <input type="text" id="search-input"
-                    class="block w-full rounded-lg border border-neutral-border bg-white px-10 py-2.5 text-sm focus:border-primary focus:ring-primary dark:border-gray-700 dark:bg-dark-surface dark:text-white"
-                    placeholder="Search ID, title, or severity...">
             </div>
 
             <div class="flex items-center gap-2">
-                <span class="text-sm font-medium text-gray-500">Filter Severity:</span>
+                <label for="severity-filter" class="text-sm font-medium text-gray-500">Filter Severity:</label>
                 <select id="severity-filter"
                     class="rounded-lg border border-neutral-border bg-white px-3 py-2 text-sm focus:border-primary focus:ring-primary dark:border-gray-700 dark:bg-dark-surface dark:text-white">
                     <option value="all">All</option>
@@ -144,22 +148,42 @@
                 return;
             }
 
-            registryBody.innerHTML = entries.map(entry => `
-                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
-                    <td class="px-6 py-4 font-mono text-sm font-bold text-gray-900 dark:text-gray-100">${entry.id}</td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${getSeverityClass(entry.severity ?? 0)}">
-            ${entry.severity != null ? entry.severity.toFixed(1) : 'N/A'}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-md truncate">
-                        ${entry.title}
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="./cve.html?id=${entry.id}" class="text-primary text-sm font-bold hover:underline">View Details</a>
-                    </td>
-                </tr>
-            `).join('');
+            registryBody.textContent = '';
+            const fragment = document.createDocumentFragment();
+
+            entries.forEach(entry => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors';
+
+                const idCell = document.createElement('td');
+                idCell.className = 'px-6 py-4 font-mono text-sm font-bold text-gray-900 dark:text-gray-100';
+                idCell.textContent = entry.id;
+
+                const severityCell = document.createElement('td');
+                severityCell.className = 'px-6 py-4';
+                const severityBadge = document.createElement('span');
+                severityBadge.className = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold';
+                severityBadge.classList.add(...getSeverityClass(entry.severity ?? 0).split(' '));
+                severityBadge.textContent = entry.severity != null ? entry.severity.toFixed(1) : 'N/A';
+                severityCell.appendChild(severityBadge);
+
+                const titleCell = document.createElement('td');
+                titleCell.className = 'px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-md truncate';
+                titleCell.textContent = entry.title;
+
+                const detailsCell = document.createElement('td');
+                detailsCell.className = 'px-6 py-4';
+                const detailsLink = document.createElement('a');
+                detailsLink.className = 'text-primary text-sm font-bold hover:underline';
+                detailsLink.href = `./cve.html?id=${encodeURIComponent(entry.id)}`;
+                detailsLink.textContent = 'View Details';
+                detailsCell.appendChild(detailsLink);
+
+                row.append(idCell, severityCell, titleCell, detailsCell);
+                fragment.appendChild(row);
+            });
+
+            registryBody.appendChild(fragment);
         }
 
         function filterRegistry() {
@@ -167,15 +191,16 @@
             const severityValue = severityFilter.value;
 
             const filtered = allEntries.filter(entry => {
+                const severityText = entry.severity != null ? String(entry.severity) : '';
                 const matchesSearch = entry.id.toLowerCase().includes(query) ||
                     entry.title.toLowerCase().includes(query) ||
-                    entry.severity.toString().includes(query);
+                    severityText.includes(query);
 
                 let matchesSeverity = true;
-                if (severityValue === 'critical') matchesSeverity = entry.severity >= 9.0;
-                else if (severityValue === 'high') matchesSeverity = entry.severity >= 7.0 && entry.severity < 9.0;
-                else if (severityValue === 'medium') matchesSeverity = entry.severity >= 4.0 && entry.severity < 7.0;
-                else if (severityValue === 'low') matchesSeverity = entry.severity < 4.0;
+                if (severityValue === 'critical') matchesSeverity = entry.severity != null && entry.severity >= 9.0;
+                else if (severityValue === 'high') matchesSeverity = entry.severity != null && entry.severity >= 7.0 && entry.severity < 9.0;
+                else if (severityValue === 'medium') matchesSeverity = entry.severity != null && entry.severity >= 4.0 && entry.severity < 7.0;
+                else if (severityValue === 'low') matchesSeverity = entry.severity != null && entry.severity < 4.0;
 
                 return matchesSearch && matchesSeverity;
             });
