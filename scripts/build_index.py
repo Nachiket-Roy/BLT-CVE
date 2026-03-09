@@ -69,7 +69,7 @@ def build_feed(entries, now_ts):
         "items": [
             {
                 "id": eid,
-                "title": entry.get("title", ""),
+                "title": entry["title"],
                 "published": entry.get("published", ""),
                 "modified": entry.get("modified", ""),
                 "severity": entry.get("severity", {}).get("cvss_score"),
