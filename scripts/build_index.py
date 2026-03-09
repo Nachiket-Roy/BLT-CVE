@@ -52,7 +52,7 @@ def build_index(entries, now_ts):
         "entries": [
             {
                 "id": eid,
-                "title": entry.get("title", ""),
+                "title": entry["title"],
                 "path": rel,
                 "severity": entry.get("severity", {}).get("cvss_score"),
             }
