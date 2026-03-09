@@ -38,38 +38,9 @@
             }
         };
     </script>
+    <link rel="stylesheet" href="./css/common.css" />
+    <script src="./js/common.js"></script>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
-
-        :root {
-            --blt-primary: #E10101;
-            --blt-background: #f8fafc;
-        }
-
-        .dark {
-            --blt-primary: #EF4444;
-            --blt-background: #111827;
-        }
-
-        body {
-            background: var(--blt-background);
-            transition: background-color 0.3s ease;
-        }
-
-        .hero-glow {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 500px;
-            z-index: -10;
-            pointer-events: none;
-            background:
-                radial-gradient(circle at 50% 0%, rgba(225, 1, 1, 0.1), transparent 70%),
-                linear-gradient(to bottom, transparent, var(--blt-background));
-        }
-    </style>
 </head>
 
 <body

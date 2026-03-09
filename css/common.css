@@ -1,7 +1,7 @@
 /**
  * BLT-CVE Common Styles
  */
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import 'https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap';
 
 :root {
     --blt-primary: #E10101;
@@ -28,7 +28,7 @@ body {
     width: auto;
     aspect-ratio: 1;
     vertical-align: -0.125em;
-    fill: currentColor;
+    fill: currentcolor;
     overflow: visible;
 }
 

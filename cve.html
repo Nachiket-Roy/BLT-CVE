@@ -62,7 +62,7 @@
 
         async function fetchCVEDetails() {
             if (!cveId) {
-                container.innerHTML = '<div class="text-center py-20"><h1 class="text-2xl font-bold text-red-500">No CVE ID specified.</h1><p class="mt-4">Please selection a vulnerability from the <a href="./registry.html" class="text-primary underline">registry</a>.</p></div>';
+                container.innerHTML = '<div class="text-center py-20"><h1 class="text-2xl font-bold text-red-500">No CVE ID specified.</h1><p class="mt-4">Please select a vulnerability from the <a href="./registry.html" class="text-primary underline">registry</a>.</p></div>';
                 container.classList.remove('opacity-0');
                 return;
             }
@@ -79,7 +79,7 @@
 
                 const response = await fetch(`.${entry.path}`);
                 const data = await response.json();
-                renderCVE(data);
+                renderCVE(data, entry);
             } catch (error) {
                 console.error('Error fetching CVE:', error);
                 container.innerHTML = `<div class="text-center py-20"><h1 class="text-2xl font-bold text-red-500">Vulnerability not found.</h1><p class="mt-4 text-gray-500">${error.message}</p></div>`;
@@ -94,7 +94,7 @@
             return 'text-blue-600 dark:text-blue-400';
         }
 
-        function renderCVE(data) {
+        function renderCVE(data, entry) {
             container.innerHTML = `
                 <div class="mb-10">
                     <span class="text-sm font-bold text-primary uppercase tracking-widest">${data.id}</span>
@@ -142,12 +142,14 @@
                             <h2 class="text-xl font-bold text-gray-900 dark:text-white border-b border-neutral-border dark:border-gray-800 pb-2 mb-4">References</h2>
                             <ul class="space-y-2">
                                 ${data.references.map(ref => `
+                                    ${(ref.startsWith('https://') || ref.startsWith('http://')) ? `
                                     <li>
                                         <a href="${ref}" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline break-all inline-flex items-center gap-2">
                                             ${ref}
                                             <svg class="fa-icon w-3 h-3" viewBox="0 0 448 512"><path d="M432 320c-13.3 0-24 10.7-24 24v112c0 4.4-3.6 8-8 8H48c-4.4 0-8-3.6-8-8V112c0-4.4 3.6-8 8-8h112c13.3 0 24-10.7 24-24s-10.7-24-24-24H48C21.5 56 0 77.5 0 104v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V344c0-13.3-10.7-24-24-24zm-112-280h104c8.8 0 16 7.2 16 16v104c0 8.8-7.2 16-16 16s-16-7.2-16-16V102.6L169.4 343.4c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6L387.4 80H336c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>
                                         </a>
                                     </li>
+                                    ` : `<li class="text-gray-500">${ref} (invalid URL)</li>`}
                                 `).join('')}
                             </ul>
                         </section>
@@ -173,8 +175,6 @@
                     </div>
                 </div>
             `;
-            // Store entry object for path access
-            window.entry = data;
         }
 
         fetchCVEDetails();

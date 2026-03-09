@@ -91,8 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.nav-link').forEach(link => {
         if (link.getAttribute('href').includes(currentPath)) {
             link.classList.add('text-primary');
-            link.classList.remove('text-sm');
-            link.classList.add('text-sm', 'font-bold');
+            link.classList.add('font-bold');
         }
     });
 

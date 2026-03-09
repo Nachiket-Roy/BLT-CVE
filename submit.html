@@ -205,8 +205,8 @@
                         <li class="flex gap-3">
                             <span
                                 class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white text-xs">3</span>
-                            <p>Create a new file in <code>cves/${new Date().getFullYear()}/</code> named
-                                <code>BLT-${new Date().getFullYear()}-XXXX.json</code> and paste your JSON.
+                            <p>Create a new file in <code id="cve-path"></code> named
+                                <code id="cve-filename"></code> and paste your JSON.
                             </p>
                         </li>
                         <li class="flex gap-3">
@@ -235,6 +235,8 @@
         function updateJSON() {
             const now = new Date().toISOString();
             const year = new Date().getFullYear();
+            document.getElementById('cve-path').textContent = `cves/${year}/`;
+            document.getElementById('cve-filename').textContent = `BLT-${year}-XXXX.json`;
 
             const data = {
                 id: `BLT-${year}-XXXX`,
@@ -251,7 +253,7 @@
                     cvss_score: parseFloat(document.getElementById('form-cvss').value) || 0.0,
                     vector: document.getElementById('form-vector').value || "CVSS:3.1/..."
                 },
-                references: document.getElementById('form-references').value.split('\n').filter(r => r.trim() !== ""),
+                references: document.getElementById('form-references').value.split('\n').filter(r => r.trim() !== "") || ["https://example.com/placeholder"],
                 reporter: document.getElementById('form-reporter').value || "your-github-username",
                 signature: ""
             };
@@ -264,9 +266,15 @@
         });
 
         copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(preview.textContent);
+            navigator.clipboard.writeText(preview.textContent)
+        .then(() => {
             copyBtn.textContent = 'Copied!';
             setTimeout(() => copyBtn.textContent = 'Copy to Clipboard', 2000);
+        })
+        .catch(() => {
+            copyBtn.textContent = 'Copy failed';
+            setTimeout(() => copyBtn.textContent = 'Copy to Clipboard', 2000);
+        });
         });
 
         // Initial call

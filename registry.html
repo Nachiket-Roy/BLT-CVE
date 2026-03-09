@@ -93,11 +93,11 @@
             </div>
         </div>
 
-        <footer id="main-footer"
-            class="mt-24 border-t border-neutral-border bg-white py-12 dark:border-gray-700 dark:bg-dark-surface">
-            <!-- Injected by common.js -->
-        </footer>
     </main>
+    <footer id="main-footer"
+        class="mt-24 border-t border-neutral-border bg-white py-12 dark:border-gray-700 dark:bg-dark-surface">
+        <!-- Injected by common.js -->
+    </footer>
 
     <script>
         // Registry Logic
@@ -131,6 +131,7 @@
         }
 
         function getSeverityClass(score) {
+            if (score == null) return 'bg-gray-100 text-gray-700 dark:bg-gray-900/40 dark:text-gray-300';
             if (score >= 9.0) return 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300';
             if (score >= 7.0) return 'bg-orange-100 text-orange-700 dark:bg-orange-900/40 dark:text-orange-300';
             if (score >= 4.0) return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300';
@@ -147,8 +148,8 @@
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
                     <td class="px-6 py-4 font-mono text-sm font-bold text-gray-900 dark:text-gray-100">${entry.id}</td>
                     <td class="px-6 py-4">
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${getSeverityClass(entry.severity)}">
-                            ${entry.severity.toFixed(1)}
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold ${getSeverityClass(entry.severity ?? 0)}">
+            ${entry.severity != null ? entry.severity.toFixed(1) : 'N/A'}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300 max-w-md truncate">
