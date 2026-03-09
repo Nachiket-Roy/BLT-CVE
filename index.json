@@ -1,10 +1,11 @@
 {
   "namespace": "BLT",
-  "updated": "2026-03-01T23:56:51Z",
+  "updated": "2026-03-09T16:36:03Z",
   "count": 1,
   "entries": [
     {
       "id": "BLT-2026-0001",
+      "title": "Example SQL Injection in ExampleApp Login Endpoint",
       "path": "/cves/2026/BLT-2026-0001.json",
       "severity": 9.8
     }

@@ -115,16 +115,9 @@
                 const response = await fetch('./index.json');
                 const data = await response.json();
 
-                // Fetch full details for each entry in background to get the titles
-                // In a real app, index.json might contain titles to avoid separate fetches
-                allEntries = await Promise.all(data.entries.map(async entry => {
-                    try {
-                        const detailRes = await fetch(`.${entry.path}`);
-                        const details = await detailRes.json();
-                        return { ...entry, title: details.title };
-                    } catch (e) {
-                        return { ...entry, title: 'No title available' };
-                    }
+                allEntries = (data.entries || []).map(entry => ({
+                    ...entry,
+                    title: entry.title || 'No title available',
                 }));
 
                 renderEntries(allEntries);
@@ -163,7 +156,7 @@
                 severityCell.className = 'px-6 py-4';
                 const severityBadge = document.createElement('span');
                 severityBadge.className = 'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold';
-                severityBadge.classList.add(...getSeverityClass(entry.severity ?? 0).split(' '));
+                severityBadge.classList.add(...getSeverityClass(entry.severity).split(' '));
                 severityBadge.textContent = entry.severity != null ? entry.severity.toFixed(1) : 'N/A';
                 severityCell.appendChild(severityBadge);
 

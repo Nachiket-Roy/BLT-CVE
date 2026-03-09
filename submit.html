@@ -161,7 +161,8 @@
 
                     <div>
                         <label for="form-vector" class="form-label">CVSS Vector String</label>
-                        <input type="text" id="form-vector" class="form-input"
+                        <input type="text" id="form-vector" class="form-input" pattern="CVSS:.*"
+                            title="CVSS vector must start with CVSS:"
                             placeholder="CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:N" required>
                     </div>
 
@@ -231,14 +232,21 @@
             'form-product', 'form-versions', 'form-cvss',
             'form-reporter', 'form-vector', 'form-references'
         ];
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+        });
 
         function updateJSON() {
             const now = new Date().toISOString();
             const year = new Date().getFullYear();
+            const referencesField = document.getElementById('form-references');
             const references = document.getElementById('form-references').value
                 .split('\n')
                 .map(r => r.trim())
                 .filter(Boolean);
+                referencesField.setCustomValidity(
+                references.length > 0 ? '' : 'Add at least one reference.'
+            );
             document.getElementById('cve-path').textContent = `cves/${year}/`;
             document.getElementById('cve-filename').textContent = `BLT-${year}-XXXX.json`;
 
@@ -263,6 +271,7 @@
             };
 
             preview.textContent = JSON.stringify(data, null, 2);
+            copyBtn.disabled = !form.checkValidity();
         }
 
         inputs.forEach(id => {
